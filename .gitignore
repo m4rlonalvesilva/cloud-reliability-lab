@@ -1,0 +1,34 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+# Versione .terraform.lock.hcl por módulo (recomendado pela HashiCorp).
+crash.*.log
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Planejamento local (pessoal; não versionar)
+docs/
+
+# Credenciais e segredos (nunca versionar)
+*.pem
+*.ppk
+.env
+.env.*
+secrets/
+
+# SO e editores
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+*.log

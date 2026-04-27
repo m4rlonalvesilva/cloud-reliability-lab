@@ -1,0 +1,10 @@
+# Padrão geral; linhas abaixo sobrescrevem para tipos específicos.
+* text=auto
+
+# Scripts shell: LF (Git Bash / Linux / CI) — evita aviso CRLF no Windows.
+*.sh text eol=lf
+
+# HCL/Terraform e Markdown: LF reduz diffs entre sistemas.
+*.tf text eol=lf
+*.tfvars.example text eol=lf
+*.md text eol=lf

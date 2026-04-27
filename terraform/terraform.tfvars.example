@@ -1,0 +1,20 @@
+# Copie para terraform.tfvars (NAO versionado) e ajuste:
+#   Copy-Item terraform.tfvars.example terraform.tfvars
+#
+# Descubra seu IP publico no Windows (PowerShell):
+#   .\scripts\get-my-public-ip.ps1
+#
+# Crie um Key Pair na regiao em: EC2 > Key Pairs (baixe o .pem e guarde fora do Git)
+
+# Regiao padrao do lab (custo/preços de referencia). Para menor latencia no Brasil, tente sa-east-1.
+aws_region = "us-east-1"
+
+# Seu IP em /32 (pode listar varios blocos)
+allow_ssh_cidrs = ["203.0.113.10/32"]
+
+# Nome exato do Key Pair na AWS (mesma regiao)
+ec2_key_name = "minha-chave-lab"
+
+# Opcional
+# instance_type      = "t3.micro"
+# ec2_instance_count = 2
