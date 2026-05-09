@@ -21,6 +21,14 @@ data "aws_ami" "ubuntu" {
   }
 }
 
+locals {
+  # Normaliza CRLF para LF para evitar "/usr/bin/env: bash\r" no cloud-init.
+  k8s_common_sh          = replace(file("${path.module}/../kubernetes/scripts/common.sh"), "\r", "")
+  k8s_install_components = replace(file("${path.module}/../kubernetes/scripts/install-k8s-components.sh"), "\r", "")
+  k8s_control_plane_sh   = replace(file("${path.module}/../kubernetes/scripts/control-plane.sh"), "\r", "")
+  k8s_worker_sh          = replace(file("${path.module}/../kubernetes/scripts/worker.sh"), "\r", "")
+}
+
 # --- VPC ---
 resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
@@ -87,6 +95,25 @@ resource "aws_security_group" "ec2" {
     }
   }
 
+  dynamic "ingress" {
+    for_each = var.expose_kubernetes_api_https ? var.allow_ssh_cidrs : []
+    content {
+      description = "Kubernetes API (HTTPS) from same CIDRs as SSH - lab / kubectl local"
+      from_port   = 6443
+      to_port     = 6443
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+    }
+  }
+
+  ingress {
+    description = "Trafego interno entre nos do lab (cluster)"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    self        = true
+  }
+
   egress {
     description = "Permite saida para internet (apt, curl, etc.)"
     from_port   = 0
@@ -108,11 +135,50 @@ resource "aws_security_group" "ec2" {
 resource "aws_instance" "app" {
   count = var.ec2_instance_count
 
-  ami                    = data.aws_ami.ubuntu.id
-  instance_type          = var.instance_type
-  subnet_id              = aws_subnet.public.id
-  vpc_security_group_ids = [aws_security_group.ec2.id]
-  key_name               = var.ec2_key_name
+  depends_on = [aws_ssm_parameter.k8s_join]
+
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = var.instance_type
+  subnet_id                   = aws_subnet.public.id
+  vpc_security_group_ids      = [aws_security_group.ec2.id]
+  key_name                    = var.ec2_key_name
+  iam_instance_profile        = aws_iam_instance_profile.ec2_k8s_bootstrap.name
+  user_data_replace_on_change = true
+  user_data                   = <<-EOT
+    #!/usr/bin/env bash
+    set -euxo pipefail
+    exec > >(tee /var/log/k8s-bootstrap.log | logger -t k8s-bootstrap -s 2>/dev/console) 2>&1
+
+    export AWS_DEFAULT_REGION="${var.aws_region}"
+    export SSM_JOIN_PARAMETER_NAME="/${var.project_name}/k8s/join-command"
+
+    cat >/tmp/common.sh <<'SCRIPT_COMMON'
+    ${local.k8s_common_sh}
+    SCRIPT_COMMON
+
+    cat >/tmp/install-k8s-components.sh <<'SCRIPT_INSTALL'
+    ${local.k8s_install_components}
+    SCRIPT_INSTALL
+
+    cat >/tmp/control-plane.sh <<'SCRIPT_CONTROL'
+    ${local.k8s_control_plane_sh}
+    SCRIPT_CONTROL
+
+    cat >/tmp/worker.sh <<'SCRIPT_WORKER'
+    ${local.k8s_worker_sh}
+    SCRIPT_WORKER
+
+    chmod +x /tmp/common.sh /tmp/install-k8s-components.sh /tmp/control-plane.sh /tmp/worker.sh
+
+    /tmp/common.sh
+    /tmp/install-k8s-components.sh
+
+    if [ "${count.index}" -eq 0 ]; then
+      /tmp/control-plane.sh
+    else
+      /tmp/worker.sh
+    fi
+  EOT
 
   root_block_device {
     volume_size           = 20
@@ -129,6 +195,6 @@ resource "aws_instance" "app" {
 
   tags = {
     Name = "${var.project_name}-ubuntu-${count.index + 1}"
-    Role = "lab-node"
+    Role = count.index == 0 ? "control-plane" : "worker"
   }
 }

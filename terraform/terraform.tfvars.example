@@ -1,15 +1,19 @@
-# Copie para terraform.tfvars (NAO versionado) e ajuste:
-#   Copy-Item terraform.tfvars.example terraform.tfvars
+# Copie para terraform.tfvars (NAO versionado) e ajuste (Git Bash, na pasta terraform):
+#   cp terraform.tfvars.example terraform.tfvars
 #
-# Descubra seu IP publico no Windows (PowerShell):
-#   .\scripts\get-my-public-ip.ps1
+# IMPORTANTE: terraform.tfvars (real) está no .gitignore — nunca commite ele.
+# Neste .example use SEMPRE um IP fictício de documentação (abaixo). Nunca coloque
+# seu IP público real aqui antes de dar push — repositórios públicos expõem o histórico.
+#
+# Descubra seu IP publico (Git Bash, na raiz do repo):
+#   ./scripts/get-my-public-ip.sh
 #
 # Crie um Key Pair na regiao em: EC2 > Key Pairs (baixe o .pem e guarde fora do Git)
 
 # Regiao padrao do lab (custo/preços de referencia). Para menor latencia no Brasil, tente sa-east-1.
 aws_region = "us-east-1"
 
-# Seu IP em /32 (pode listar varios blocos)
+# Exemplo fictício (RFC 5737, bloco TEST-NET-3) — substitua pelo SEU IP em /32 só em terraform.tfvars local.
 allow_ssh_cidrs = ["203.0.113.10/32"]
 
 # Nome exato do Key Pair na AWS (mesma regiao)
@@ -18,3 +22,6 @@ ec2_key_name = "minha-chave-lab"
 # Opcional
 # instance_type      = "t3.micro"
 # ec2_instance_count = 2
+#
+# kubectl no PC (6443 a partir dos mesmos CIDRs que o SSH) — ver kubernetes/scripts/import-kubeconfig-local.sh
+# expose_kubernetes_api_https = true

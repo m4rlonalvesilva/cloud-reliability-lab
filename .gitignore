@@ -7,6 +7,13 @@
 # Versione .terraform.lock.hcl por módulo (recomendado pela HashiCorp).
 crash.*.log
 crash.log
+
+# Inventário do lab (gerado por terraform apply; raiz do repo)
+cluster-lab.generated.txt
+
+# Kubeconfig local (import-kubeconfig-local.sh — não versionar)
+.kube-generated/
+
 override.tf
 override.tf.json
 *_override.tf
@@ -16,6 +23,9 @@ terraform.rc
 
 # Planejamento local (pessoal; não versionar)
 docs/
+
+# Duração do terraform apply (Passo 11 do README)
+reports/terraform-apply-timing.log
 
 # Credenciais e segredos (nunca versionar)
 *.pem

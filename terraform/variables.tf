@@ -38,6 +38,12 @@ variable "allow_ssh_cidrs" {
   # Sem default intencional: force o preenchimento em terraform.tfvars
 }
 
+variable "expose_kubernetes_api_https" {
+  description = "Se true, abre TCP 6443 (kube-apiserver) a partir dos mesmos CIDRs que allow_ssh_cidrs, para usar kubectl na sua máquina (fora do SSH). Mantenha false se só usar kubectl via SSH."
+  type        = bool
+  default     = false
+}
+
 variable "ec2_key_name" {
   description = "Nome do Key Pair já existente na região (criado no console AWS ou via CLI)."
   type        = string

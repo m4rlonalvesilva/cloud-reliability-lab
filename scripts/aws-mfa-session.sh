@@ -8,7 +8,8 @@
 #   AWS_DEFAULT_REGION  (padrao: us-east-1)
 #   AWS_MFA_DURATION    (padrao: 43200 = 12h)
 
-set -euo pipefail
+# Nao use "set -euo pipefail" aqui: este arquivo e carregado com "source"
+# no shell interativo, e essas opcoes podem encerrar o Git Bash ao primeiro erro.
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   echo "Este script precisa ser carregado com source para exportar as variaveis no seu shell:" >&2
