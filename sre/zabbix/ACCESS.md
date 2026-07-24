@@ -1,6 +1,7 @@
 # Acesso ao Zabbix (lab) — complemento
 
-Guia principal (login web + agent manual): **[README.md](README.md)**
+Guia principal (login web): **[README.md](README.md)**  
+**Depois do Zabbix subir → agents:** **[01-INSTALAR-AGENT.md](01-INSTALAR-AGENT.md)**
 
 **Login UI:** utilizador `Admin` · password `zabbix`  
 **URL:** `http://<ZABBIX_PUBLIC_IP>/zabbix` (ver `terraform output zabbix_url`)

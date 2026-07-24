@@ -22,7 +22,8 @@ terraform destroy   # sempre ao terminar
 | [PLAN-ZABBIX.md](PLAN-ZABBIX.md) | Plano de implementação |
 | [LAB-ALERTAS.md](LAB-ALERTAS.md) | Roteiro: criar e tratar alertas |
 | [ARQUITETURA.md](ARQUITETURA.md) | Arquitetura alvo desta fase |
-| [zabbix/README.md](zabbix/README.md) | **Login UI + instalação manual do agent** |
+| [zabbix/README.md](zabbix/README.md) | Índice Zabbix + login UI |
+| [zabbix/01-INSTALAR-AGENT.md](zabbix/01-INSTALAR-AGENT.md) | **Passo a passo: instalar agent nas máquinas** |
 | [zabbix/ACCESS.md](zabbix/ACCESS.md) | URL, logs, wait script |
 
 ## Estado atual

@@ -9,10 +9,10 @@ Este ficheiro descreve o **que vais praticar**. Os passos exatos de UI serão re
 ## Pré-requisitos
 
 - [ ] `terraform apply` com Zabbix ligado
-- [ ] URL do Zabbix no inventário gerado
-- [ ] Login na UI (lab: `Admin` / `zabbix` — **alterar password**)
-- [ ] Hosts `control-plane`, `worker`, `zabbix-server` com agent Available
-
+- [ ] UI a responder (`./sre/zabbix/scripts/wait-for-zabbix.sh`)
+- [ ] Login **Admin** / **zabbix**
+- [ ] Agents instalados nos nós — segue **[`zabbix/01-INSTALAR-AGENT.md`](zabbix/01-INSTALAR-AGENT.md)**
+- [ ] Hosts `control-plane` e `worker` com agent Available (verde)
 ---
 
 ## Conceitos (mapa rápido)
