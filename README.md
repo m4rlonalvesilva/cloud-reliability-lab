@@ -2,6 +2,8 @@
 
 Lab na AWS: VPC, 2× Ubuntu (control-plane + worker), kubeadm + Calico. Acesso por **SSH**; opcionalmente **`kubectl` no PC** ([Apêndice A](#apendice-a-kubectl-no-seu-computador)). No fim: **`terraform destroy`**.
 
+**Track SRE (Zabbix / alertas):** plano e roteiro em [`sre/`](sre/) — objetivo: `terraform apply` sobe o lab com Zabbix acessível para criar e tratar alertas.
+
 ## TL;DR
 
 Para quem já tem AWS CLI + Terraform configurados.
