@@ -29,7 +29,8 @@ terraform destroy   # sempre ao terminar
 |------|--------|
 | VPC + 2× EC2 + kubeadm + Calico | Existe |
 | Labs CKA | Existe (`kubernetes/labs/`) |
-| EC2 Zabbix / agents / labs de alerta | **A implementar** (ver PLAN-ZABBIX) |
+| Flag `enable_zabbix` + EC2 Zabbix + SG :80 + outputs | **Passo 2 feito** (bootstrap ainda é stub) |
+| Instalação Zabbix Server + agents + labs de alerta | **Passo 3+** (ver PLAN-ZABBIX) |
 
 ## Custo (ordem de grandeza, us-east-1)
 

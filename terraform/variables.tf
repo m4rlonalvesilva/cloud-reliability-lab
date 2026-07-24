@@ -71,3 +71,15 @@ variable "ubuntu_codename" {
   type        = string
   default     = "jammy"
 }
+
+variable "enable_zabbix" {
+  description = "Se true, cria EC2 dedicada para Zabbix Server (track SRE). false = só cluster K8s (menor custo)."
+  type        = bool
+  default     = true
+}
+
+variable "zabbix_instance_type" {
+  description = "Tipo da EC2 do Zabbix Server. Recomendado t3.small (~2 GiB) para Server+DB+Frontend."
+  type        = string
+  default     = "t3.small"
+}

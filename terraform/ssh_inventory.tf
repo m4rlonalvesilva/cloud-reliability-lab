@@ -17,6 +17,7 @@ locals {
     "Região:  ${var.aws_region}",
     "Key Pair (nome na AWS): ${var.ec2_key_name}",
     "Utilizador AMI Ubuntu: ubuntu",
+    "Zabbix Server (enable_zabbix): ${var.enable_zabbix}",
     "",
   ])
 
@@ -37,6 +38,32 @@ locals {
       "",
     ])
   ]
+
+  zabbix_inventory_section = var.enable_zabbix ? join("\n", [
+    "────────────────────────────────────────────────────────────",
+    "Zabbix Server — ${aws_instance.zabbix[0].tags.Name}",
+    "  Função (tag Role): zabbix-server",
+    "  IP público:        ${aws_instance.zabbix[0].public_ip}",
+    "  IP privado:        ${aws_instance.zabbix[0].private_ip}",
+    "  DNS público:       ${aws_instance.zabbix[0].public_dns}",
+    "  URL UI (lab):      http://${aws_instance.zabbix[0].public_ip}/zabbix",
+    "  Nota:              instalação completa = Passo 3 (agora só stub de bootstrap)",
+    "",
+    "  SSH:",
+    "    ssh -i \"$SSH_KEY_PATH\" -o StrictHostKeyChecking=accept-new ubuntu@${aws_instance.zabbix[0].public_ip}",
+    "",
+    "  Log de bootstrap:",
+    "    sudo tail -f /var/log/zabbix-bootstrap.log",
+    "",
+    "  Roteiro de alertas (quando UI estiver pronta): sre/LAB-ALERTAS.md",
+    "",
+    ]) : join("\n", [
+    "────────────────────────────────────────────────────────────",
+    "Zabbix Server: desligado (enable_zabbix = false)",
+    "  Para ligar: enable_zabbix = true em terraform.tfvars e terraform apply",
+    "  Plano: sre/PLAN-ZABBIX.md",
+    "",
+  ])
 
   cluster_lab_kubectl_section = join("\n", [
     "",
@@ -76,5 +103,5 @@ locals {
 
 resource "local_file" "cluster_lab" {
   filename = "${path.module}/../cluster-lab.generated.txt"
-  content  = "${local.cluster_lab_header}${join("\n", local.ssh_inventory_blocks)}${local.cluster_lab_kubectl_section}"
+  content  = "${local.cluster_lab_header}${join("\n", local.ssh_inventory_blocks)}${local.zabbix_inventory_section}${local.cluster_lab_kubectl_section}"
 }

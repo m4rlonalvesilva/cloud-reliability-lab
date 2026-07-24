@@ -56,3 +56,28 @@ output "cluster_lab_generated_file" {
   description = "Caminho absoluto de cluster-lab.generated.txt (raiz do repositório: SSH + kubectl)."
   value       = abspath(local_file.cluster_lab.filename)
 }
+
+output "enable_zabbix" {
+  description = "Se a EC2 Zabbix Server foi pedida neste apply."
+  value       = var.enable_zabbix
+}
+
+output "zabbix_instance_id" {
+  description = "ID da EC2 Zabbix Server (null se enable_zabbix=false)."
+  value       = try(aws_instance.zabbix[0].id, null)
+}
+
+output "zabbix_public_ip" {
+  description = "IP público do Zabbix Server (null se enable_zabbix=false)."
+  value       = try(aws_instance.zabbix[0].public_ip, null)
+}
+
+output "zabbix_private_ip" {
+  description = "IP privado do Zabbix Server — agents nos nós K8s devem apontar para este IP."
+  value       = try(aws_instance.zabbix[0].private_ip, null)
+}
+
+output "zabbix_url" {
+  description = "URL da UI Zabbix (HTTP lab). Só acessível a partir de allow_ssh_cidrs. Instalação completa = Passo 3."
+  value       = var.enable_zabbix ? "http://${aws_instance.zabbix[0].public_ip}/zabbix" : null
+}

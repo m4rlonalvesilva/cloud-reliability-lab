@@ -1,5 +1,6 @@
+# Comentário no topo de main.tf — K8s nodes; Zabbix em zabbix.tf
 # -----------------------------------------------------------------------------
-# Infraestrutura base: VPC pública, 2x EC2 Ubuntu, SSH restrito por CIDR
+# Infraestrutura base: VPC pública, EC2 Ubuntu (K8s) + opcional Zabbix (zabbix.tf)
 # -----------------------------------------------------------------------------
 
 data "aws_availability_zones" "available" {

@@ -20,8 +20,13 @@ allow_ssh_cidrs = ["203.0.113.10/32"]
 ec2_key_name = "minha-chave-lab"
 
 # Opcional
-# instance_type      = "t3.micro"
+# instance_type      = "t3.small"   # K8s precisa ~2 GiB (control-plane rejeita t3.micro)
 # ec2_instance_count = 2
+#
+# Track SRE — Zabbix Server em EC2 dedicada (default true nesta fase)
+# enable_zabbix         = true
+# zabbix_instance_type  = "t3.small"
+# enable_zabbix         = false   # só cluster K8s (menor custo)
 #
 # kubectl no PC (6443 a partir dos mesmos CIDRs que o SSH) — ver kubernetes/scripts/import-kubeconfig-local.sh
 # expose_kubernetes_api_https = true
