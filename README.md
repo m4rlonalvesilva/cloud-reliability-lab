@@ -70,6 +70,7 @@ cloud-reliability-lab/
   ├─ kubernetes/
   │  ├─ labs/                    # labs CKA (cópia): manifestos + guias; publicados no cluster
   │  └─ scripts/                 # bootstrap EC2 + wait / deploy-cka-labs / import-kubeconfig
+  ├─ sre/                        # track SRE: plano Zabbix, lab de alertas, arquitetura
   ├─ README.md                   # este guia
   ├─ scripts/                    # MFA, IP público (na tua máquina)
   └─ terraform/                  # .tf, apply; dentro: .terraform/ e *.tfstate (local)
