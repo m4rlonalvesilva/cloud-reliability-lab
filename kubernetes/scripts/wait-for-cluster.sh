@@ -5,53 +5,24 @@
 #   ./kubernetes/scripts/wait-for-cluster.sh
 #
 # Requisitos: terraform, ssh, bash, jq (Windows: winget install jqlang.jq — README seção 1)
+#
+# Após todos os nós Ready, por padrão publica kubernetes/labs/. Desative com:
+#   CKA_DEPLOY_LABS=false ./kubernetes/scripts/wait-for-cluster.sh
 
 set -euo pipefail
 
-# Em Git Bash aberto pelo Explorador (duplo-clique) ou em certos atalhos, a janela
-# fecha ao fim do processo — use uma sessão Git Bash já aberta na raiz do repo.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/cluster-ssh.sh
+source "$SCRIPT_DIR/lib/cluster-ssh.sh"
 
 die() {
-  [[ -n "${1:-}" ]] && printf '%s\n' "$1" >&2
-  # Dar tempo de ler o erro antes da janela fechar (Windows / mintty).
-  if [[ -e /dev/tty ]]; then
-    read -r -p "Enter para sair. " _ </dev/tty 2>/dev/null || true
-  elif [[ -t 0 ]]; then
-    read -r -p "Enter para sair. " _ || true
-  fi
-  exit 1
+  cluster_ssh_die "$@"
 }
-
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-TF_DIR="$ROOT_DIR/terraform"
 
 INTERVAL_SEC="${WAIT_INTERVAL_SEC:-20}"
 MAX_WAIT_SEC="${WAIT_MAX_SEC:-3600}"
 
-if [[ -z "${SSH_KEY_PATH:-}" ]]; then
-  echo "Defina SSH_KEY_PATH com o caminho da chave .pem (não commitar)." >&2
-  echo "Ex.: export SSH_KEY_PATH=\"/c/Users/SEU_USUARIO/caminho/cloud-reliability-lab-key.pem\"" >&2
-  die
-fi
-
-if [[ "$SSH_KEY_PATH" =~ ^[A-Za-z]:\\ ]]; then
-  if command -v cygpath >/dev/null 2>&1; then
-    SSH_KEY_PATH="$(cygpath "$SSH_KEY_PATH")"
-  fi
-fi
-
-if [[ ! -f "$SSH_KEY_PATH" ]]; then
-  echo "Chave não encontrada: $SSH_KEY_PATH" >&2
-  die
-fi
-
-# Linux: OpenSSH exige chave sem permissões "demasiado abertas".
-# Em ficheiros sob /mnt/c/ (NTFS) o chmod pode não surtir efeito — nesse caso copie a .pem para $HOME e chmod 600.
-if [[ "$(uname -s)" == Linux ]]; then
-  chmod go-rwx "$SSH_KEY_PATH" 2>/dev/null || true
-fi
-
-for cmd in terraform ssh jq; do
+for cmd in jq; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "Comando necessário em falta: $cmd" >&2
     [[ "$cmd" == "jq" ]] && echo "Instale jq: winget install jqlang.jq (README seção 1)." >&2
@@ -59,48 +30,11 @@ for cmd in terraform ssh jq; do
   fi
 done
 
-if ! terraform -chdir="$TF_DIR" output -json ec2_public_ips >/dev/null 2>&1; then
-  echo "Terraform não leu ec2_public_ips (típico: apply noutro ambiente/OS e binários .terraform só para outra plataforma)." >&2
-  echo "A correr terraform init -upgrade uma vez…" >&2
-  terraform -chdir="$TF_DIR" init -upgrade >&2 || true
-fi
+cluster_ssh_init
 
-if ! terraform -chdir="$TF_DIR" output -json ec2_public_ips >/dev/null 2>&1; then
-  echo "Não foi possível ler terraform output (ec2_public_ips)." >&2
-  echo "Detalhe do Terraform:" >&2
-  terraform -chdir="$TF_DIR" output -json ec2_public_ips 2>&1 | sed 's/^/  /' >&2 || true
-  echo "" >&2
-  echo "Dicas: confirme que existe terraform/terraform.tfstate após um apply." >&2
-  echo "Se o estado existe, rode manualmente:" >&2
-  echo "  terraform -chdir=\"$TF_DIR\" init -upgrade" >&2
-  echo "  terraform -chdir=\"$TF_DIR\" output -json ec2_public_ips" >&2
-  die
-fi
-
-IPS_JSON="$(terraform -chdir="$TF_DIR" output -json ec2_public_ips)"
-CP_IP="$(echo "$IPS_JSON" | jq -r '.[0]')"
-EXPECTED_NODES="$(echo "$IPS_JSON" | jq 'length')"
-
-if [[ -z "$CP_IP" || "$CP_IP" == "null" ]]; then
-  echo "IP do control-plane inválido no output do Terraform." >&2
-  exit 1
-fi
-
-SSH_OPTS=(
-  -i "$SSH_KEY_PATH"
-  -o StrictHostKeyChecking=accept-new
-  -o UserKnownHostsFile=/dev/null
-  -o LogLevel=ERROR
-  -o ConnectTimeout=15
-)
-
-run_ssh() {
-  ssh "${SSH_OPTS[@]}" "ubuntu@${CP_IP}" "$@"
-}
-
-echo "A testar SSH ao control-plane ${CP_IP}…" >&2
+echo "A testar SSH ao control-plane ${CLUSTER_SSH_CP_IP}…" >&2
 set +e
-_ssh_test_out="$(run_ssh 'echo ssh_ok' 2>&1)"
+_ssh_test_out="$(cluster_ssh_run 'echo ssh_ok' 2>&1)"
 _ssh_test_rc=$?
 set -e
 _ssh_test_out="${_ssh_test_out//$'\r'/}"
@@ -117,8 +51,7 @@ if [[ "$_ssh_test_rc" -ne 0 ]] || [[ "$_ssh_test_trim" != "ssh_ok" ]]; then
 fi
 
 count_ready_nodes() {
-  # Imprime só um número (0 se ainda não há kubeconfig ou kubectl falha)
-  run_ssh 'bash -s' <<'REMOTE'
+  cluster_ssh_run 'bash -s' <<'REMOTE'
 set -u
 if [[ ! -f /home/ubuntu/.kube/config ]]; then
   echo 0
@@ -128,7 +61,7 @@ kubectl get nodes --no-headers 2>/dev/null | awk '$2=="Ready"{n++} END{print n+0
 REMOTE
 }
 
-echo "== Aguardando cluster (control-plane ${CP_IP}, ${EXPECTED_NODES} nó(s) esperado(s)) =="
+echo "== Aguardando cluster (control-plane ${CLUSTER_SSH_CP_IP}, ${CLUSTER_SSH_EXPECTED_NODES} nó(s) esperado(s)) =="
 echo "   Intervalo: ${INTERVAL_SEC}s | Máximo: ${MAX_WAIT_SEC}s (ajuste WAIT_INTERVAL_SEC / WAIT_MAX_SEC)"
 echo ""
 
@@ -143,18 +76,28 @@ while (( SECONDS < deadline )); do
   [[ "$count" =~ ^[0-9]+$ ]] || count=0
 
   if (( count != last_count )); then
-    echo "[$ts] Nós Ready: ${count}/${EXPECTED_NODES}"
+    echo "[$ts] Nós Ready: ${count}/${CLUSTER_SSH_EXPECTED_NODES}"
     last_count=$count
   else
-    echo "[$ts] Nós Ready: ${count}/${EXPECTED_NODES} (sem alteração)"
+    echo "[$ts] Nós Ready: ${count}/${CLUSTER_SSH_EXPECTED_NODES} (sem alteração)"
   fi
 
-  if (( count >= EXPECTED_NODES )); then
+  if (( count >= CLUSTER_SSH_EXPECTED_NODES )); then
     echo ""
     echo "=== Cluster funcional — ${count} nó(s) Ready ==="
-    run_ssh kubectl get nodes -o wide
+    cluster_ssh_run kubectl get nodes -o wide
     echo ""
-    run_ssh kubectl get pods -A
+    cluster_ssh_run kubectl get pods -A
+    echo ""
+
+    _deploy="${CKA_DEPLOY_LABS:-true}"
+    if [[ "$_deploy" != "false" && "$_deploy" != "0" ]]; then
+      "$SCRIPT_DIR/deploy-cka-labs.sh"
+    else
+      echo "CKA_DEPLOY_LABS=false — labs CKA não publicados automaticamente."
+      echo "Para publicar depois: ./kubernetes/scripts/deploy-cka-labs.sh"
+    fi
+
     printf '\a'
     exit 0
   fi

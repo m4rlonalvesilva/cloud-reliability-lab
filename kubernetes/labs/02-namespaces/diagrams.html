@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lab 02 — Diagramas</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.25rem; }
+    h2 { font-size: 1rem; margin-top: 2rem; color: #333; }
+    .mermaid { margin: 1rem 0; }
+    p.note { color: #555; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>Lab 02 — Namespaces (diagramas)</h1>
+  <p class="note">Abra este arquivo no navegador. No editor, use os diagramas ASCII do README-guided.md.</p>
+
+  <h2>Escopo de namespace</h2>
+  <pre class="mermaid">
+flowchart TB
+  subgraph vendas["lab-ns-vendas"]
+    PV["Pod db"]
+    SV["Service db"]
+    PV --- SV
+  end
+  subgraph infra["lab-ns-infra"]
+    PI["Pod db"]
+    SI["Service db"]
+    PI --- SI
+  end
+  NODE["Node - sem namespace"]
+  </pre>
+
+  <h2>DNS curto vs FQDN</h2>
+  <pre class="mermaid">
+flowchart LR
+  TEST["Pod dns-test\n(vendas)"]
+  S1["Service db\n(vendas)"]
+  S2["Service db\n(infra)"]
+  TEST -->|nslookup db| S1
+  TEST -->|FQDN .infra.svc...| S2
+  </pre>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "neutral" });
+  </script>
+</body>
+</html>

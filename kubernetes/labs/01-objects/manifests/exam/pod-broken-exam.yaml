@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: exam-cka-obj
+  labels:
+    app: api-fix
+spec:
+containers:
+  - name: api
+    image: nginx:1.25-alpine

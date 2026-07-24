@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lab-objects-01
+  labels:
+    app: obj-lab
+spec:
+containers:
+  - name: nginx
+    image: nginx:1.25-alpine

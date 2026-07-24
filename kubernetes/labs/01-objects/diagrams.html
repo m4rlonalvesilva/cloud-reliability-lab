@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lab 01 — Diagramas</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.25rem; }
+    h2 { font-size: 1rem; margin-top: 2rem; color: #333; }
+    .mermaid { margin: 1rem 0; }
+    p.note { color: #555; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>Lab 01 — Objetos Kubernetes (diagramas)</h1>
+  <p class="note">Abra este arquivo no navegador (duplo clique). O preview de Markdown do editor não renderiza Mermaid por padrão.</p>
+
+  <h2>Fluxo declarativo</h2>
+  <pre class="mermaid">
+flowchart LR
+  YAML["Manifesto YAML\n(spec desejado)"]
+  API["API Server"]
+  ETCD[("etcd")]
+  CTRL["Controllers"]
+  KUBELET["kubelet"]
+  STATUS["status no objeto"]
+  YAML -->|kubectl apply| API
+  API --> ETCD
+  ETCD --> CTRL
+  CTRL --> KUBELET
+  KUBELET -->|reporta| STATUS
+  STATUS --> API
+  </pre>
+
+  <h2>spec vs status</h2>
+  <pre class="mermaid">
+flowchart TB
+  USER["kubectl apply / edit"]
+  SYS["scheduler + kubelet"]
+  SPEC["spec\nvocê: image, portas"]
+  STATUS["status\ncluster: phase, podIP"]
+  USER --> SPEC
+  SYS --> STATUS
+  </pre>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "neutral" });
+  </script>
+</body>
+</html>

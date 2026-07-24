@@ -18,7 +18,7 @@ terraform init && terraform validate && terraform plan
 terraform apply -auto-approve
 cd ..
 export SSH_KEY_PATH="/c/Users/SEU_USUARIO/caminho/sua-chave.pem"
-./kubernetes/scripts/wait-for-cluster.sh
+./kubernetes/scripts/wait-for-cluster.sh   # publica labs em kubernetes/labs/ quando Ready
 # na raiz do repositório (o cd .. acima já voltou da pasta terraform)
 cd terraform && terraform destroy
 ```
@@ -36,8 +36,9 @@ cd terraform && terraform destroy
 - [7. Criar e editar terraform.tfvars](#7-criar-e-editar-terraformtfvars)
 - [8. Subir a infraestrutura (terraform apply)](#8-subir-a-infraestrutura-terraform-apply)
 - [9. Aguardar o Kubernetes (bootstrap)](#9-aguardar-o-kubernetes-bootstrap)
-- [10. Usar o cluster](#10-usar-o-cluster)
-- [11. Encerrar e não deixar custo rodando](#11-encerrar-e-não-deixar-custo-rodando)
+- [10. Labs CKA no cluster](#10-labs-cka-no-cluster)
+- [11. Usar o cluster](#11-usar-o-cluster)
+- [12. Encerrar e não deixar custo rodando](#12-encerrar-e-não-deixar-custo-rodando)
 - [Se algo der errado](#se-algo-der-errado)
 - [Opcional: Git e editor](#opcional-git-e-editor)
 - [Apêndice A: kubectl no seu computador](#apendice-a-kubectl-no-seu-computador)
@@ -65,7 +66,8 @@ cloud-reliability-lab/
   ├─ .kube-generated/            # local: kubeconfig (import-kubeconfig-local.sh)
   ├─ cluster-lab.generated.txt   # local: resumo SSH (terraform apply)
   ├─ kubernetes/
-  │  └─ scripts/                 # bootstrap EC2 + wait / import-kubeconfig / setup-kubectl-local
+  │  ├─ labs/                    # labs CKA (cópia): manifestos + guias; publicados no cluster
+  │  └─ scripts/                 # bootstrap EC2 + wait / deploy-cka-labs / import-kubeconfig
   ├─ README.md                   # este guia
   ├─ scripts/                    # MFA, IP público (na tua máquina)
   └─ terraform/                  # .tf, apply; dentro: .terraform/ e *.tfstate (local)
@@ -239,9 +241,28 @@ export SSH_KEY_PATH="/c/Users/SEU_USUARIO/caminho/sua-chave.pem"
 
 Objetivo: todos os nós **Ready** (por padrão 2, salvo `ec2_instance_count`).
 
+Ao terminar com sucesso, o script publica automaticamente o **Lab 01** em [`kubernetes/labs/01-objects/`](kubernetes/labs/01-objects/) (namespace `lab-objects-01` + ficheiros em `~/cka-labs/01-objects` no control-plane). Detalhes: [`kubernetes/labs/README.md`](kubernetes/labs/README.md).
+
+Para **não** publicar os labs neste passo: `CKA_DEPLOY_LABS=false ./kubernetes/scripts/wait-for-cluster.sh`
+
 ---
 
-## 10. Usar o cluster
+## 10. Labs CKA no cluster
+
+Os manifestos estão **dentro deste repositório** em `kubernetes/labs/` (cópia do projeto de estudo CKA, repositório separado). O [`deploy-cka-labs.sh`](kubernetes/scripts/deploy-cka-labs.sh) copia para o control-plane e aplica só o bootstrap; os exercícios seguem o `README-guided.md` de cada lab.
+
+| Ação | Comando |
+|------|---------|
+| Automático (após Ready) | `./kubernetes/scripts/wait-for-cluster.sh` |
+| Manual | `./kubernetes/scripts/deploy-cka-labs.sh` |
+| Lab 01 + 02 | `CKA_LABS=01-objects,02-namespaces ./kubernetes/scripts/deploy-cka-labs.sh` |
+| Atualizar cópia a partir do repo CKA | `./kubernetes/scripts/sync-cka-labs.sh` |
+
+Estudo no cluster: SSH → `cd ~/cka-labs/01-objects` e abra `README-guided.md`.
+
+---
+
+## 11. Usar o cluster
 
 IP do control-plane: `cluster-lab.generated.txt` ou output Terraform (`Role: control-plane`).
 
@@ -255,7 +276,7 @@ Se `kubectl` falhar: bootstrap ainda em curso → log no passo 9.
 
 ---
 
-## 11. Encerrar e não deixar custo rodando
+## 12. Encerrar e não deixar custo rodando
 
 `cd terraform && terraform destroy` — confirmar `yes`.
 

@@ -43,6 +43,7 @@ locals {
     "COMANDOS RÁPIDOS (Git Bash, na raiz do repositório):",
     "  export SSH_KEY_PATH=\"/c/Users/SEU_USUARIO/Documents/cloud-reliability-lab-key.pem\"",
     "  ./kubernetes/scripts/wait-for-cluster.sh",
+    "  # publica Lab 01 (kubernetes/labs/01-objects): namespace lab-objects-01 + ~/cka-labs/01-objects",
     "",
     "================================================================================",
     "kubectl no control-plane (mesmo IP do nó com Role: control-plane acima)",

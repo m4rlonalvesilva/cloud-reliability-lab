@@ -1,0 +1,9 @@
+apiVersion: apps/v1
+kind: Pod
+metadata:
+  name: nginx-wrong-api
+  namespace: lab-objects-01
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.25-alpine

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lab-ns-vendas
+  labels:
+    study.cka/module: namespaces
+    team: vendas
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lab-ns-infra
+  labels:
+    study.cka/module: namespaces
+    team: infra
