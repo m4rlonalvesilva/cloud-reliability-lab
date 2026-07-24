@@ -3,8 +3,9 @@
 Lab na AWS: VPC, 2× Ubuntu (control-plane + worker), kubeadm + Calico. Acesso por **SSH**; opcionalmente **`kubectl` no PC** ([Apêndice A](#apendice-a-kubectl-no-seu-computador)). No fim: **`terraform destroy`**.
 
 **Track SRE (Zabbix / alertas):** ver [`sre/`](sre/).  
-Depois do Zabbix no ar → instalar agents: **[`sre/zabbix/01-INSTALAR-AGENT.md`](sre/zabbix/01-INSTALAR-AGENT.md)** (passo a passo).  
-Login UI: `Admin` / `zabbix` — [`sre/zabbix/README.md`](sre/zabbix/README.md).
+Depois do Zabbix no ar → agents: [`sre/zabbix/01-INSTALAR-AGENT.md`](sre/zabbix/01-INSTALAR-AGENT.md).  
+Entender e corrigir alertas (agent/CPU/memória): [`sre/zabbix/02-ENTENDER-E-TRATAR-ALERTAS.md`](sre/zabbix/02-ENTENDER-E-TRATAR-ALERTAS.md).  
+Login UI: `Admin` / `zabbix`.
 
 
 ## TL;DR

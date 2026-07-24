@@ -1,20 +1,20 @@
 # Zabbix — lab SRE
 
-## Depois do Zabbix subir — começa aqui
+## Depois do Zabbix subir — ordem de estudo
 
 | Passo | Documento |
 |-------|-----------|
-| 1. Login na UI | Secção abaixo |
-| 2. **Instalar o agent nas máquinas (aprender à mão)** | **[01-INSTALAR-AGENT.md](01-INSTALAR-AGENT.md)** ← guia completo |
-| 3. Criar e tratar alertas | [../LAB-ALERTAS.md](../LAB-ALERTAS.md) |
-
-Caminho no repo:
+| 1. Login na UI | Secção abaixo (`Admin` / `zabbix`) |
+| 2. Instalar agents | **[01-INSTALAR-AGENT.md](01-INSTALAR-AGENT.md)** |
+| 3. **Entender alertas e corrigir (vida real)** | **[02-ENTENDER-E-TRATAR-ALERTAS.md](02-ENTENDER-E-TRATAR-ALERTAS.md)** |
+| 4. Mais exercícios | [../LAB-ALERTAS.md](../LAB-ALERTAS.md) |
 
 ```text
 sre/zabbix/01-INSTALAR-AGENT.md
+sre/zabbix/02-ENTENDER-E-TRATAR-ALERTAS.md
+sre/runbooks/   ← o que fazer em cada alerta
+sre/drills/     ← start/restore para provocar o alerta
 ```
-
-Também aparece em `cluster-lab.generated.txt` depois do `terraform apply`.
 
 ---
 
@@ -42,6 +42,7 @@ Mais detalhes (logs, DB): [ACCESS.md](ACCESS.md).
 
 | Ficheiro | Conteúdo |
 |----------|----------|
-| **[01-INSTALAR-AGENT.md](01-INSTALAR-AGENT.md)** | Passo a passo: agent no control-plane e worker + hosts na UI |
+| [01-INSTALAR-AGENT.md](01-INSTALAR-AGENT.md) | Passo a passo do agent |
+| [02-ENTENDER-E-TRATAR-ALERTAS.md](02-ENTENDER-E-TRATAR-ALERTAS.md) | Como alertas funcionam + labs agent/CPU/memória |
 | [ACCESS.md](ACCESS.md) | URL, wait script, logs |
-| [scripts/](scripts/) | `install-zabbix-server.sh`, `wait-for-zabbix.sh` |
+| [scripts/](scripts/) | install server + wait |
