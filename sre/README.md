@@ -23,7 +23,7 @@ terraform destroy   # sempre ao terminar
 | [LAB-ALERTAS.md](LAB-ALERTAS.md) | Roteiro: criar e tratar alertas |
 | [ARQUITETURA.md](ARQUITETURA.md) | Arquitetura alvo desta fase |
 | [zabbix/01-INSTALAR-AGENT.md](zabbix/01-INSTALAR-AGENT.md) | Passo a passo: instalar agent |
-| [zabbix/02-ENTENDER-E-TRATAR-ALERTAS.md](zabbix/02-ENTENDER-E-TRATAR-ALERTAS.md) | **Como alertas funcionam + corrigir (agent/CPU/mem)** |
+| [zabbix/03-CENARIOS-VIDA-REAL.md](zabbix/03-CENARIOS-VIDA-REAL.md) | **12 cenários reais + ordem de prática** |
 | [runbooks/](runbooks/) | Runbooks estilo produção |
 | [drills/](drills/) | Scripts start/restore |
 

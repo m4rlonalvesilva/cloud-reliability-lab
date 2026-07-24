@@ -5,15 +5,15 @@
 | Passo | Documento |
 |-------|-----------|
 | 1. Login na UI | Secção abaixo (`Admin` / `zabbix`) |
-| 2. Instalar agents | **[01-INSTALAR-AGENT.md](01-INSTALAR-AGENT.md)** |
-| 3. **Entender alertas e corrigir (vida real)** | **[02-ENTENDER-E-TRATAR-ALERTAS.md](02-ENTENDER-E-TRATAR-ALERTAS.md)** |
-| 4. Mais exercícios | [../LAB-ALERTAS.md](../LAB-ALERTAS.md) |
+| 2. Instalar agents | [01-INSTALAR-AGENT.md](01-INSTALAR-AGENT.md) |
+| 3. Entender alertas (base) | [02-ENTENDER-E-TRATAR-ALERTAS.md](02-ENTENDER-E-TRATAR-ALERTAS.md) |
+| 4. **Cenários vida real (12)** | **[03-CENARIOS-VIDA-REAL.md](03-CENARIOS-VIDA-REAL.md)** |
+| 5. Mais exercícios | [../LAB-ALERTAS.md](../LAB-ALERTAS.md) |
 
 ```text
-sre/zabbix/01-INSTALAR-AGENT.md
-sre/zabbix/02-ENTENDER-E-TRATAR-ALERTAS.md
-sre/runbooks/   ← o que fazer em cada alerta
-sre/drills/     ← start/restore para provocar o alerta
+sre/zabbix/03-CENARIOS-VIDA-REAL.md   ← catálogo
+sre/runbooks/                         ← o que fazer
+sre/drills/                           ← start / restore
 ```
 
 ---
@@ -32,9 +32,7 @@ export SSH_KEY_PATH="/c/Users/SEU_USUARIO/caminho/sua-chave.pem"
 cd terraform && terraform output zabbix_url
 ```
 
-No primeiro login, altera a password do `Admin`.
-
-Mais detalhes (logs, DB): [ACCESS.md](ACCESS.md).
+No primeiro login, altera a password do `Admin`. Detalhes: [ACCESS.md](ACCESS.md).
 
 ---
 
@@ -42,7 +40,7 @@ Mais detalhes (logs, DB): [ACCESS.md](ACCESS.md).
 
 | Ficheiro | Conteúdo |
 |----------|----------|
-| [01-INSTALAR-AGENT.md](01-INSTALAR-AGENT.md) | Passo a passo do agent |
-| [02-ENTENDER-E-TRATAR-ALERTAS.md](02-ENTENDER-E-TRATAR-ALERTAS.md) | Como alertas funcionam + labs agent/CPU/memória |
-| [ACCESS.md](ACCESS.md) | URL, wait script, logs |
-| [scripts/](scripts/) | install server + wait |
+| [01-INSTALAR-AGENT.md](01-INSTALAR-AGENT.md) | Instalar agent |
+| [02-ENTENDER-E-TRATAR-ALERTAS.md](02-ENTENDER-E-TRATAR-ALERTAS.md) | Modelo mental + labs base |
+| [03-CENARIOS-VIDA-REAL.md](03-CENARIOS-VIDA-REAL.md) | 12 cenários com runbook + drill |
+| [ACCESS.md](ACCESS.md) | URL, logs, wait |

@@ -52,9 +52,10 @@ Runbooks detalhados:
 
 | Cenário | Runbook |
 |---------|---------|
-| Agent Zabbix fora / unreachable | [../runbooks/zabbix-agent-down.md](../runbooks/zabbix-agent-down.md) |
-| CPU alta | [../runbooks/linux-cpu-high.md](../runbooks/linux-cpu-high.md) |
-| Memória alta | [../runbooks/linux-memory-high.md](../runbooks/linux-memory-high.md) |
+| Agent Zabbix fora | [zabbix-agent-down](../runbooks/zabbix-agent-down.md) |
+| CPU alta | [linux-cpu-high](../runbooks/linux-cpu-high.md) |
+| Memória alta | [linux-memory-high](../runbooks/linux-memory-high.md) |
+| **+9 cenários vida real** | **[03-CENARIOS-VIDA-REAL.md](03-CENARIOS-VIDA-REAL.md)** |
 
 ---
 
@@ -170,28 +171,21 @@ Ou o drill: ver [linux-memory-high.md](../runbooks/linux-memory-high.md).
 | Agent down / unavailable | Sem monitoração do host | SSH + `systemctl status/start zabbix-agent2` | `systemctl start zabbix-agent2` |
 | CPU high | CPU no limiar | `top` — quem consome? | Parar stress/`yes` |
 | Memory high / low available | RAM no limiar | `free -h` + top por `%mem` | Parar processo de stress |
-| (mais tarde) Disco cheio | Filesystem no limiar | `df -h` + limpar / logs | Apagar ficheiro de drill |
+| Disco / inodes / serviço / K8s / … | Ver catálogo completo | Runbook do cenário | Drill `start`/`restore` |
 
 ---
 
-## Ordem sugerida de prática (1 sessão)
+## Ordem sugerida de prática
 
-1. Confirma hosts verdes  
-2. Lab 1 agent down → trata → valida  
-3. Lab 2 CPU → trata → valida  
-4. Lab 3 memória → trata → valida  
-5. Anota 3 linhas por incidente: sintoma / causa / o que fizeste  
+**Sessão curta:** agent → CPU → memória → disco  
 
-Depois aprofunda em [../LAB-ALERTAS.md](../LAB-ALERTAS.md) (criar triggers teus, severidades, anti-padrões).
+**Catálogo completo (12 cenários):** **[03-CENARIOS-VIDA-REAL.md](03-CENARIOS-VIDA-REAL.md)**
+
+Depois: [../LAB-ALERTAS.md](../LAB-ALERTAS.md) (triggers teus, severidades).
 
 ---
 
-## Drills (reproduzir / restaurar)
+## Drills
 
-| Drill | Ficheiro |
-|-------|----------|
-| CPU alta | [`../drills/cpu-high.sh`](../drills/cpu-high.sh) |
-| Memória alta | [`../drills/memory-high.sh`](../drills/memory-high.sh) |
-| Agent parado | [`../drills/agent-down.sh`](../drills/agent-down.sh) |
-
-Cada script aceita `start` e `restore` e imprime o que está a fazer.
+Lista completa: [`../drills/README.md`](../drills/README.md)  
+Cada script: `start` + `restore`.
