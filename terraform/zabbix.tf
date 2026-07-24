@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------
 
 locals {
-  zabbix_stub_sh = replace(file("${path.module}/../sre/zabbix/scripts/bootstrap-stub.sh"), "\r", "")
+  zabbix_install_sh = replace(file("${path.module}/../sre/zabbix/scripts/install-zabbix-server.sh"), "\r", "")
 }
 
 # UI HTTP (:80) só dos mesmos CIDRs do SSH — nunca 0.0.0.0/0
@@ -33,12 +33,12 @@ resource "aws_instance" "zabbix" {
     #!/usr/bin/env bash
     set -euxo pipefail
 
-    cat >/tmp/zabbix-bootstrap-stub.sh <<'SCRIPT_ZABBIX'
-    ${local.zabbix_stub_sh}
+    cat >/tmp/install-zabbix-server.sh <<'SCRIPT_ZABBIX'
+    ${local.zabbix_install_sh}
     SCRIPT_ZABBIX
 
-    chmod +x /tmp/zabbix-bootstrap-stub.sh
-    /tmp/zabbix-bootstrap-stub.sh
+    chmod +x /tmp/install-zabbix-server.sh
+    /tmp/install-zabbix-server.sh
   EOT
 
   root_block_device {

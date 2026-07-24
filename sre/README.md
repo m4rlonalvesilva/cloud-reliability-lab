@@ -19,9 +19,10 @@ terraform destroy   # sempre ao terminar
 
 | Ficheiro | Conteúdo |
 |----------|----------|
-| [PLAN-ZABBIX.md](PLAN-ZABBIX.md) | Plano de implementação (o que falta no código) |
-| [LAB-ALERTAS.md](LAB-ALERTAS.md) | Roteiro de aprendizagem: criar e tratar alertas |
-| [ARQUITETURA.md](ARQUITETURA.md) | Arquitetura alvo desta fase e evolução |
+| [PLAN-ZABBIX.md](PLAN-ZABBIX.md) | Plano de implementação |
+| [LAB-ALERTAS.md](LAB-ALERTAS.md) | Roteiro: criar e tratar alertas |
+| [ARQUITETURA.md](ARQUITETURA.md) | Arquitetura alvo desta fase |
+| [zabbix/ACCESS.md](zabbix/ACCESS.md) | URL, login, logs, wait script |
 
 ## Estado atual
 
@@ -29,8 +30,9 @@ terraform destroy   # sempre ao terminar
 |------|--------|
 | VPC + 2× EC2 + kubeadm + Calico | Existe |
 | Labs CKA | Existe (`kubernetes/labs/`) |
-| Flag `enable_zabbix` + EC2 Zabbix + SG :80 + outputs | **Passo 2 feito** (bootstrap ainda é stub) |
-| Instalação Zabbix Server + agents + labs de alerta | **Passo 3+** (ver PLAN-ZABBIX) |
+| Flag `enable_zabbix` + EC2 Zabbix + SG :80 + outputs | Feito |
+| Instalação Zabbix Server + UI + wait script | **Passo 3 feito** |
+| Agents nos nós K8s + hosts/templates + drills | **Passo 4+** (ver PLAN-ZABBIX) |
 
 ## Custo (ordem de grandeza, us-east-1)
 

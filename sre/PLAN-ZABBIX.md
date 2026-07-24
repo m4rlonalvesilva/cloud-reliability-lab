@@ -22,11 +22,13 @@ cd terraform
 terraform init && terraform apply
 
 # 3) Esperar bootstrap (K8s + Zabbix)
-#    Ficheiro gerado deve incluir URL do Zabbix + IPs
+./kubernetes/scripts/wait-for-cluster.sh   # opcional CKA
+./sre/zabbix/scripts/wait-for-zabbix.sh
 
 # 4) Abrir no browser (só o teu CIDR)
 #    http://<ZABBIX_PUBLIC_IP>/zabbix
 #    user: Admin  /  password: zabbix   (lab — mudar no 1.º login)
+#    detalhes: sre/zabbix/ACCESS.md
 
 # 5) Seguir sre/LAB-ALERTAS.md
 
@@ -45,11 +47,11 @@ Objetivo pedagógico: **criar alertas, provocar falhas, ver eventos, reconhecer,
 - [x] Flag Terraform `enable_zabbix` (default `true`; `false` = só K8s)
 - [x] 3.ª EC2: **Zabbix Server** (`zabbix_instance_type`, default `t3.small`) — resource `aws_instance.zabbix`
 - [x] Security Group: UI HTTP :80 só em `allow_ssh_cidrs` (agents usam tráfego self do SG no MVP)
-- [ ] Bootstrap Server: Zabbix Server + Frontend + DB (PostgreSQL) — **Passo 3** (hoje: stub)
+- [x] Bootstrap Server: Zabbix 7.0 + Frontend Apache + PostgreSQL (`install-zabbix-server.sh`)
 - [ ] Bootstrap Agent nos nós K8s existentes (control-plane + worker)
 - [x] Inventário gerado com URL + SSH do Zabbix (`cluster-lab.generated.txt` + outputs)
-- [ ] Hosts no Zabbix: `zabbix-server`, `control-plane`, `worker` (auto-registo ou script pós-boot)
-- [ ] Template Linux básico (CPU, memória, disco, load, ping, agent)
+- [ ] Hosts no Zabbix: `control-plane`, `worker` (além do “Zabbix server” local)
+- [ ] Template Linux básico nos hosts K8s (agent)
 - [ ] Documentação: LAB-ALERTAS + 2–3 runbooks Linux iniciais
 - [ ] Scripts seguros de simulação: CPU alta, disco cheio, serviço parado (+ restore)
 
@@ -80,12 +82,13 @@ Outputs: `zabbix_public_ip`, `zabbix_private_ip`, `zabbix_url`. Fluxo CKA intact
 - `terraform/zabbix.tf`, stub `sre/zabbix/scripts/bootstrap-stub.sh`
 - SG :80, inventário, outputs
 
-### Passo 3 — Bootstrap Zabbix Server ← **próximo**
+### Passo 3 — Bootstrap Zabbix Server ✅
 
-- Substituir stub por `install-zabbix-server.sh`
-- Frontend + PostgreSQL; credenciais de lab documentadas
+- `sre/zabbix/scripts/install-zabbix-server.sh`
+- `sre/zabbix/scripts/wait-for-zabbix.sh`
+- `sre/zabbix/ACCESS.md` (Admin/zabbix)
 
-### Passo 4 — Agents nos nós K8s
+### Passo 4 — Agents nos nós K8s ← **próximo**
 
 - `zabbix-agent2` no bootstrap CP/worker; ServerActive → IP privado do Zabbix
 
@@ -106,7 +109,7 @@ Outputs: `zabbix_public_ip`, `zabbix_private_ip`, `zabbix_url`. Fluxo CKA intact
 | UI | HTTP :80 no MVP; HTTPS depois se necessário |
 | Acesso UI | Mesmos CIDRs que SSH (`allow_ssh_cidrs`) |
 | DB | PostgreSQL local na EC2 Zabbix |
-| Versão | Zabbix 7.0 LTS (ou estável do repo no momento da implementação) |
+| Versão | Zabbix 7.0 LTS (repo oficial, Ubuntu 22.04) |
 | Kafka/WebLogic | Fora do MVP |
 | CKA labs | Continuam; `CKA_DEPLOY_LABS=false` se quiseres só SRE numa sessão |
 
@@ -128,12 +131,12 @@ Outputs: `zabbix_public_ip`, `zabbix_private_ip`, `zabbix_url`. Fluxo CKA intact
 |-------|-----------|
 | Custo 3× EC2 | `enable_zabbix=false`; destroy ao fim; Budget AWS |
 | UI aberta na internet | Só `allow_ssh_cidrs`; nunca `0.0.0.0/0` |
-| Senha default Admin/zabbix | Documentar troca no 1.º acesso |
-| Bootstrap longo | Log em `/var/log/zabbix-bootstrap.log`; script wait |
+| Senha default Admin/zabbix | Documentar troca no 1.º acesso (`ACCESS.md`) |
+| Bootstrap longo | Log + `wait-for-zabbix.sh` |
 | user_data K8s em nó Zabbix | EC2 separada `aws_instance.zabbix` ✅ |
 
 ---
 
 ## Próxima ação concreta
 
-Implementar **Passo 3**: instalação real do Zabbix Server + Frontend + PostgreSQL (substituir o stub).
+Implementar **Passo 4**: `zabbix-agent2` nos nós K8s apontando para o IP privado do Zabbix Server.

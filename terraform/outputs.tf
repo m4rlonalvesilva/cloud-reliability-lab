@@ -78,6 +78,6 @@ output "zabbix_private_ip" {
 }
 
 output "zabbix_url" {
-  description = "URL da UI Zabbix (HTTP lab). Só acessível a partir de allow_ssh_cidrs. Instalação completa = Passo 3."
+  description = "URL da UI Zabbix (HTTP lab). Só acessível a partir de allow_ssh_cidrs. Ver sre/zabbix/ACCESS.md."
   value       = var.enable_zabbix ? "http://${aws_instance.zabbix[0].public_ip}/zabbix" : null
 }
