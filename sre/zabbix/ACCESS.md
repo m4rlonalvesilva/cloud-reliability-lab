@@ -1,7 +1,11 @@
-# Acesso ao Zabbix (lab)
+# Acesso ao Zabbix (lab) — complemento
 
-**Apenas laboratório.** Security Group restringe a UI aos CIDRs em `allow_ssh_cidrs`.  
-Altera a password do `Admin` no primeiro login.
+Guia principal (login web + agent manual): **[README.md](README.md)**
+
+**Login UI:** utilizador `Admin` · password `zabbix`  
+**URL:** `http://<ZABBIX_PUBLIC_IP>/zabbix` (ver `terraform output zabbix_url`)
+
+---
 
 ## Depois do `terraform apply`
 
@@ -12,13 +16,13 @@ Altera a password do `Admin` no primeiro login.
    export SSH_KEY_PATH="/c/Users/SEU_USUARIO/caminho/sua-chave.pem"
    ./sre/zabbix/scripts/wait-for-zabbix.sh
    ```
-3. Browser: `http://<ZABBIX_PUBLIC_IP>/zabbix`
+3. Browser + login (ver tabela no [README.md](README.md))
 
 | Campo | Valor (lab) |
 |-------|-------------|
 | Utilizador | `Admin` |
 | Password | `zabbix` |
-| DB (interno) | user `zabbix` / password `LabZabbixDB` |
+| DB (interno, não é o login web) | user `zabbix` / password `LabZabbixDB` |
 
 ## Logs na EC2
 
@@ -36,5 +40,5 @@ Valor esperado: linha a começar por `ready`.
 
 ## Próximo passo de estudo
 
-[`../LAB-ALERTAS.md`](../LAB-ALERTAS.md) — criar e tratar alertas.  
-Agents nos nós K8s = Passo 4 do [`../PLAN-ZABBIX.md`](../PLAN-ZABBIX.md).
+1. Agents manuais: [README.md](README.md)  
+2. Alertas: [`../LAB-ALERTAS.md`](../LAB-ALERTAS.md)
