@@ -56,12 +56,20 @@ sudo apt-get update -y
 sudo apt-get install -y postgresql
 
 # --- Pacotes Zabbix (cria utilizador OS zabbix) ---
+# php-pgsql é obrigatório: sem ele a UI diz "POSTGRESQL is not supported... Possible values MYSQL"
 sudo apt-get install -y \
   zabbix-server-pgsql \
   zabbix-frontend-php \
   zabbix-apache-conf \
   zabbix-sql-scripts \
-  zabbix-agent2
+  zabbix-agent2 \
+  php-pgsql \
+  php-mbstring \
+  php-gd \
+  php-xml \
+  php-bcmath \
+  php-ldap \
+  php-curl
 
 # --- Base de dados ---
 if ! sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='zabbix'" | grep -q 1; then

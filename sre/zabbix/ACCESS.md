@@ -39,7 +39,18 @@ sudo tail -f /var/log/zabbix/zabbix_server.log
 Ficheiro: `/var/lib/cloud-reliability-lab/zabbix-bootstrap.status`  
 Valor esperado: linha a começar por `ready`.
 
-## Próximo passo de estudo
+## Troubleshooting
+
+### UI: `DB type "POSTGRESQL" is not supported... Possible values MYSQL`
+
+Falta o módulo PHP PostgreSQL. Na EC2 Zabbix:
+
+```bash
+sudo apt-get install -y php-pgsql
+sudo systemctl restart apache2
+```
+
+(O bootstrap atual já instala `php-pgsql` em novas máquinas.)
 
 1. Agents manuais: [README.md](README.md)  
 2. Alertas: [`../LAB-ALERTAS.md`](../LAB-ALERTAS.md)
