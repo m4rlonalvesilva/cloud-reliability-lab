@@ -2,15 +2,19 @@
 
 ## Começa aqui
 
-1. Agents: [`zabbix/01-INSTALAR-AGENT.md`](zabbix/01-INSTALAR-AGENT.md)  
-2. Como alertas funcionam: [`zabbix/02-ENTENDER-E-TRATAR-ALERTAS.md`](zabbix/02-ENTENDER-E-TRATAR-ALERTAS.md)  
-3. **Cenários vida real:** [`zabbix/03-CENARIOS-VIDA-REAL.md`](zabbix/03-CENARIOS-VIDA-REAL.md)  
+**Fluxo completo do lab:** [`zabbix/PASSO-A-PASSO.md`](zabbix/PASSO-A-PASSO.md)
+
+1. Agents: [`zabbix/01-INSTALAR-AGENT.md`](zabbix/01-INSTALAR-AGENT.md) (ou `install-agents-remote.sh`)  
+2. Criar triggers: [`zabbix/04-CONFIGURAR-ALERTAS.md`](zabbix/04-CONFIGURAR-ALERTAS.md)  
+3. Como alertas funcionam: [`zabbix/02-ENTENDER-E-TRATAR-ALERTAS.md`](zabbix/02-ENTENDER-E-TRATAR-ALERTAS.md)  
+4. Cenários vida real: [`zabbix/03-CENARIOS-VIDA-REAL.md`](zabbix/03-CENARIOS-VIDA-REAL.md)  
+5. Antes do destroy: [`zabbix/05-BACKUP-E-RESTORE.md`](zabbix/05-BACKUP-E-RESTORE.md)  
 
 ---
 
 ## Pré-requisitos
 
-- [ ] Zabbix UI (`Admin` / `zabbix`)  
+- [ ] Zabbix UI (`Admin` / `zabbix`) — versão **6.4.0**  
 - [ ] Agents verdes no control-plane e worker  
 
 ---
@@ -46,4 +50,5 @@ Fluxo: **Ack → Diagnosticar → Mitigar → Resolver → Validar**.
 
 - [ ] Todos os drills com `restore`  
 - [ ] Nodes Ready (`kubectl get nodes`)  
-- [ ] `terraform destroy` se não continuares  
+- [ ] **`backup-zabbix-config.sh` + commit** (se fores destruir)  
+- [ ] `terraform destroy` **ou** Stop das EC2  

@@ -20,9 +20,10 @@ Depois: login **Admin** / **zabbix**.
 
 ---
 
-Guia principal: **[README.md](README.md)**  
+Guia principal: **[PASSO-A-PASSO.md](PASSO-A-PASSO.md)** · **[README.md](README.md)**  
 Agents: **[01-INSTALAR-AGENT.md](01-INSTALAR-AGENT.md)**  
-**Configurar alertas:** **[04-CONFIGURAR-ALERTAS.md](04-CONFIGURAR-ALERTAS.md)**
+**Configurar alertas:** **[04-CONFIGURAR-ALERTAS.md](04-CONFIGURAR-ALERTAS.md)**  
+**Destroy / retomar:** **[05-BACKUP-E-RESTORE.md](05-BACKUP-E-RESTORE.md)**
 
 **Versão do lab:** Zabbix **6.4.0** (PostgreSQL + Apache)
 

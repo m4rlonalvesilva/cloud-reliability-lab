@@ -2,15 +2,46 @@
 
 **Quando usar este guia:** o Zabbix Server já está no ar e consegues abrir a UI no browser.
 
-**O que vais aprender:** instalar o agent à mão (como em muitos ambientes reais), apontá-lo para o Server, criar o host na consola e confirmar que as métricas chegam.
+**Guia completo do lab:** [PASSO-A-PASSO.md](PASSO-A-PASSO.md)
 
-**Login da UI (lembrança):**
+## Duas formas
+
+| Forma | Quando usar |
+|-------|-------------|
+| **A — Script (rápido)** | Retomar após destroy / poupar tempo |
+| **B — Manual (este doc)** | Aprender instalação como na vida real |
+
+### Forma A — automática
+
+```bash
+export SSH_KEY_PATH="/c/Users/SEU_USUARIO/caminho/sua-chave.pem"
+./sre/zabbix/scripts/install-agents-remote.sh
+```
+
+Depois cria os hosts na UI (blocos 4–5 abaixo) **ou**, se já tinhas backup:
+
+```bash
+export ZABBIX_PASSWORD=zabbix
+./sre/zabbix/scripts/restore-zabbix-config.sh
+./sre/zabbix/scripts/sync-host-agent-ips.sh
+```
+
+### Forma B — manual (aprender)
+
+Continua neste documento.
+
+---
+
+**O que vais aprender (manual):** instalar o agent à mão, apontá-lo para o Server, criar o host na consola e confirmar que as métricas chegam.
+
+**Login da UI:**
 
 | Campo | Valor |
 |-------|--------|
 | URL | `http://<IP_PUBLICO_ZABBIX>/zabbix` |
 | Utilizador | `Admin` |
 | Password | `zabbix` |
+| Versão Server | **6.4.0** (usa repo 6.4 no agent) |
 
 ```bash
 # No PC (raiz do repo), depois do apply:

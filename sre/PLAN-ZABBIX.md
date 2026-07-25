@@ -7,36 +7,36 @@ Decisão: **Zabbix Server em EC2 dedicada** (não em pod) — monitoração inde
 
 ---
 
-## Experiência alvo (quando estiver pronto)
+## Experiência alvo
+
+Passo a passo atualizado: **[`zabbix/PASSO-A-PASSO.md`](zabbix/PASSO-A-PASSO.md)**
 
 ```bash
-# 1) Credenciais / MFA (como hoje)
+# 1) MFA + tfvars (allow_ssh_cidrs = teu IP atual, enable_zabbix = true, t3.small)
 source ./scripts/aws-mfa-session.sh
+cd terraform && terraform apply && cd ..
 
-# 2) terraform.tfvars
-#    allow_ssh_cidrs, ec2_key_name
-#    instance_type = "t3.small"
-#    enable_zabbix = true          # NOVO
-
-cd terraform
-terraform init && terraform apply
-
-# 3) Esperar bootstrap (K8s + Zabbix)
-./kubernetes/scripts/wait-for-cluster.sh   # opcional CKA
+# 2) Esperar Zabbix 6.4.0
+export SSH_KEY_PATH="/c/Users/.../sua-chave.pem"
 ./sre/zabbix/scripts/wait-for-zabbix.sh
+# wizard se pedir: DB LabZabbixDB, TLS off → sre/zabbix/00-PRIMEIRO-ACESSO-WIZARD.md
 
-# 4) Abrir no browser (só o teu CIDR)
-#    http://<ZABBIX_PUBLIC_IP>/zabbix
-#    user: Admin  /  password: zabbix   (lab — mudar no 1.º login)
-#    detalhes: sre/zabbix/ACCESS.md
+# 3) Agents + hosts (1.ª vez) ou restore (retomar)
+./sre/zabbix/scripts/install-agents-remote.sh
+# 1.ª vez: criar hosts na UI (01-INSTALAR-AGENT.md)
+# retomar: restore + sync IPs (05-BACKUP-E-RESTORE.md)
 
-# 5) Seguir sre/LAB-ALERTAS.md
+# 4) Alertas / drills
+# sre/zabbix/04-CONFIGURAR-ALERTAS.md  +  03-CENARIOS-VIDA-REAL.md
 
-# 6) Encerrar
-terraform destroy
+# 5) Fim de sessão — NÃO perder alertas
+export ZABBIX_PASSWORD=zabbix
+./sre/zabbix/scripts/backup-zabbix-config.sh
+git add sre/zabbix/config-export && git commit -m "chore: backup config Zabbix"
+cd terraform && terraform destroy
 ```
 
-Objetivo pedagógico: **criar alertas, provocar falhas, ver eventos, reconhecer, mitigar, fechar, documentar**.
+Objetivo pedagógico: **criar alertas, provocar falhas, tratar como em produção, destruir infra sem perder a config de estudo**.
 
 ---
 
