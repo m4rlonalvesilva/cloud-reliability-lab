@@ -22,8 +22,10 @@ terraform destroy   # sempre ao terminar
 | [PLAN-ZABBIX.md](PLAN-ZABBIX.md) | Plano de implementação |
 | [LAB-ALERTAS.md](LAB-ALERTAS.md) | Roteiro: criar e tratar alertas |
 | [ARQUITETURA.md](ARQUITETURA.md) | Arquitetura alvo desta fase |
-| [zabbix/01-INSTALAR-AGENT.md](zabbix/01-INSTALAR-AGENT.md) | Passo a passo: instalar agent |
-| [zabbix/03-CENARIOS-VIDA-REAL.md](zabbix/03-CENARIOS-VIDA-REAL.md) | **12 cenários reais + ordem de prática** |
+| [zabbix/00-PRIMEIRO-ACESSO-WIZARD.md](zabbix/00-PRIMEIRO-ACESSO-WIZARD.md) | Wizard DB (1.º acesso) |
+| [zabbix/01-INSTALAR-AGENT.md](zabbix/01-INSTALAR-AGENT.md) | Instalar agent |
+| [zabbix/04-CONFIGURAR-ALERTAS.md](zabbix/04-CONFIGURAR-ALERTAS.md) | **Criar alertas na UI** |
+| [zabbix/03-CENARIOS-VIDA-REAL.md](zabbix/03-CENARIOS-VIDA-REAL.md) | 12 cenários reais |
 | [runbooks/](runbooks/) | Runbooks estilo produção |
 | [drills/](drills/) | Scripts start/restore |
 
