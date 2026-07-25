@@ -86,25 +86,28 @@ hostname -I | awk '{print $1}'
 
 Anota como `CP_PRIVATE_IP` — vais precisar na UI (Bloco 4).
 
-### 2.3 Repositório oficial Zabbix 7.0
+### 2.3 Repositório oficial Zabbix 6.4 (alinhar com o Server)
 
 ```bash
 export DEBIAN_FRONTEND=noninteractive
 cd /tmp
 
 wget -q -O zabbix-release.deb \
-  https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.0+ubuntu22.04_all.deb \
+  https://repo.zabbix.com/zabbix/6.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_6.4+ubuntu22.04_all.deb \
   || wget -q -O zabbix-release.deb \
-  https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest+ubuntu22.04_all.deb
+  https://repo.zabbix.com/zabbix/6.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.4-1+ubuntu22.04_all.deb
 
 sudo dpkg -i zabbix-release.deb
 sudo apt-get update -y
 ```
 
-### 2.4 Instalar o pacote
+### 2.4 Instalar o Agent 2 (mesma major do Server: 6.4)
 
 ```bash
-sudo apt-get install -y zabbix-agent2
+# Preferir a mesma minor do Server (6.4.0) se disponível:
+sudo apt-get install -y zabbix-agent2=1:6.4.0-1+ubuntu22.04 \
+  || sudo apt-get install -y zabbix-agent2
+sudo apt-mark hold zabbix-agent2 || true
 ```
 
 ### 2.5 Configurar (o passo mais importante)

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Instala Zabbix Server 7.0 LTS + Frontend (Apache) + PostgreSQL + Agent2 (Ubuntu 22.04).
+# Instala Zabbix Server 6.4.0 + Frontend (Apache) + PostgreSQL + Agent2 (Ubuntu 22.04).
 # Uso: cloud-init / user_data na EC2 Role=zabbix-server.
 # Lab only: passwords fixas documentadas em sre/zabbix/ACCESS.md — alterar após o 1.º login.
 set -euo pipefail
@@ -12,41 +12,48 @@ STATUS_FILE="${STATUS_DIR}/zabbix-bootstrap.status"
 DB_PASSWORD='LabZabbixDB'
 ZBX_SERVER_NAME='cloud-reliability-lab'
 PHP_TIMEZONE='America/Sao_Paulo'
+# Versão exata pedida para o lab
+ZBX_VERSION='6.4.0'
+ZBX_PKG_VER="1:${ZBX_VERSION}-1+ubuntu22.04"
 
 mark_status() {
   sudo mkdir -p "$STATUS_DIR"
   echo "$1 $(date -u +%Y-%m-%dT%H:%M:%SZ)" | sudo tee "$STATUS_FILE" >/dev/null
 }
 
-if [[ -f "$STATUS_FILE" ]] && grep -q '^ready ' "$STATUS_FILE"; then
-  echo "[zabbix] Já instalado (status ready). A sair."
+if [[ -f "$STATUS_FILE" ]] && grep -q "^ready ${ZBX_VERSION}" "$STATUS_FILE"; then
+  echo "[zabbix] Já instalado (status ready ${ZBX_VERSION}). A sair."
   exit 0
 fi
 
-mark_status "starting"
-echo "[zabbix] Início da instalação Zabbix 7.0 LTS (PostgreSQL + Apache)"
+mark_status "starting-${ZBX_VERSION}"
+echo "[zabbix] Início da instalação Zabbix ${ZBX_VERSION} (PostgreSQL + Apache)"
 
 export DEBIAN_FRONTEND=noninteractive
 
 sudo apt-get update -y
 sudo apt-get install -y ca-certificates curl wget gnupg apache2
 
-# --- Repositório oficial Zabbix 7.0 (Ubuntu 22.04 jammy) ---
 . /etc/os-release
 if [[ "${VERSION_ID:-}" != "22.04" ]]; then
   echo "[zabbix] AVISO: script validado em Ubuntu 22.04; detetado ${VERSION_ID:-desconhecido}"
 fi
 
-RELEASE_DEB_A="zabbix-release_latest_7.0+ubuntu22.04_all.deb"
-RELEASE_DEB_B="zabbix-release_latest+ubuntu22.04_all.deb"
-RELEASE_BASE="https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release"
+# --- Repositório oficial Zabbix 6.4 (Ubuntu 22.04 jammy) ---
+RELEASE_DEB="zabbix-release_latest_6.4+ubuntu22.04_all.deb"
+RELEASE_DEB_FALLBACK="zabbix-release_6.4-1+ubuntu22.04_all.deb"
+RELEASE_BASE="https://repo.zabbix.com/zabbix/6.4/ubuntu/pool/main/z/zabbix-release"
 cd /tmp
-if wget -q -O "$RELEASE_DEB_A" "${RELEASE_BASE}/${RELEASE_DEB_A}"; then
-  sudo dpkg -i "$RELEASE_DEB_A"
-elif wget -q -O "$RELEASE_DEB_B" "${RELEASE_BASE}/${RELEASE_DEB_B}"; then
-  sudo dpkg -i "$RELEASE_DEB_B"
+# Remover release antigo (ex.: 7.0) se existir
+sudo apt-get remove -y zabbix-release 2>/dev/null || true
+sudo rm -f /etc/apt/sources.list.d/zabbix.list /etc/apt/sources.list.d/zabbix*.list 2>/dev/null || true
+
+if wget -q -O "$RELEASE_DEB" "${RELEASE_BASE}/${RELEASE_DEB}"; then
+  sudo dpkg -i "$RELEASE_DEB"
+elif wget -q -O "$RELEASE_DEB_FALLBACK" "${RELEASE_BASE}/${RELEASE_DEB_FALLBACK}"; then
+  sudo dpkg -i "$RELEASE_DEB_FALLBACK"
 else
-  echo "[zabbix] ERRO: não foi possível descarregar o pacote zabbix-release"
+  echo "[zabbix] ERRO: não foi possível descarregar o pacote zabbix-release 6.4"
   mark_status "failed-repo"
   exit 1
 fi
@@ -55,14 +62,14 @@ sudo apt-get update -y
 # --- PostgreSQL ---
 sudo apt-get install -y postgresql
 
-# --- Pacotes Zabbix (cria utilizador OS zabbix) ---
-# php-pgsql é obrigatório: sem ele a UI diz "POSTGRESQL is not supported... Possible values MYSQL"
+# --- Pacotes Zabbix 6.4.0 (versão pinada) ---
+# php-pgsql é obrigatório para a UI aceitar POSTGRESQL
 sudo apt-get install -y \
-  zabbix-server-pgsql \
-  zabbix-frontend-php \
-  zabbix-apache-conf \
-  zabbix-sql-scripts \
-  zabbix-agent2 \
+  "zabbix-server-pgsql=${ZBX_PKG_VER}" \
+  "zabbix-frontend-php=${ZBX_PKG_VER}" \
+  "zabbix-apache-conf=${ZBX_PKG_VER}" \
+  "zabbix-sql-scripts=${ZBX_PKG_VER}" \
+  "zabbix-agent2=${ZBX_PKG_VER}" \
   php-pgsql \
   php-mbstring \
   php-gd \
@@ -70,6 +77,14 @@ sudo apt-get install -y \
   php-bcmath \
   php-ldap \
   php-curl
+
+# Evitar upgrade acidental para outra minor
+sudo apt-mark hold \
+  zabbix-server-pgsql \
+  zabbix-frontend-php \
+  zabbix-apache-conf \
+  zabbix-sql-scripts \
+  zabbix-agent2 || true
 
 # --- Base de dados ---
 if ! sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='zabbix'" | grep -q 1; then
@@ -79,7 +94,6 @@ if ! sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='zabbix
   sudo -u postgres createdb -O zabbix -E Unicode -T template0 zabbix
 fi
 
-# Importar schema só se ainda não houver tabelas
 TABLE_COUNT="$(sudo -u postgres psql -d zabbix -tAc "SELECT count(*) FROM information_schema.tables WHERE table_schema='public'" | tr -d '[:space:]')"
 if [[ "${TABLE_COUNT:-0}" == "0" ]]; then
   echo "[zabbix] A importar schema SQL…"
@@ -112,7 +126,7 @@ fi
 sudo mkdir -p /etc/zabbix/web
 sudo tee /etc/zabbix/web/zabbix.conf.php >/dev/null <<EOF
 <?php
-// Gerado pelo bootstrap do cloud-reliability-lab (lab only).
+// Gerado pelo bootstrap do cloud-reliability-lab (lab only) — Zabbix ${ZBX_VERSION}.
 \$DB['TYPE']     = 'POSTGRESQL';
 \$DB['SERVER']   = 'localhost';
 \$DB['PORT']     = '5432';
@@ -156,7 +170,6 @@ sudo systemctl restart zabbix-server
 sudo systemctl restart zabbix-agent2
 sudo systemctl restart apache2
 
-# --- Validação ---
 sleep 3
 if ! systemctl is-active --quiet zabbix-server; then
   echo "[zabbix] ERRO: zabbix-server não está active"
@@ -171,13 +184,16 @@ if ! systemctl is-active --quiet apache2; then
   exit 1
 fi
 
+INSTALLED_VER="$(dpkg-query -W -f='${Version}' zabbix-server-pgsql 2>/dev/null || true)"
+echo "[zabbix] Pacote instalado: zabbix-server-pgsql ${INSTALLED_VER}"
+
 HTTP_CODE="$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1/zabbix/ || true)"
 echo "[zabbix] HTTP local /zabbix/ → ${HTTP_CODE}"
 if [[ "$HTTP_CODE" != "200" && "$HTTP_CODE" != "301" && "$HTTP_CODE" != "302" ]]; then
   echo "[zabbix] AVISO: UI ainda não respondeu 200 (código ${HTTP_CODE}); ver logs Apache/PHP"
 fi
 
-mark_status "ready"
-echo "[zabbix] Instalação concluída."
+mark_status "ready ${ZBX_VERSION}"
+echo "[zabbix] Instalação concluída — Zabbix ${ZBX_VERSION}."
 echo "[zabbix] UI: http://<IP_PUBLICO>/zabbix  |  Admin / zabbix  (alterar password)"
 echo "[zabbix] Detalhes: sre/zabbix/ACCESS.md"

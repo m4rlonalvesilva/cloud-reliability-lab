@@ -25,6 +25,7 @@ sre/drills/                           ← start / restore
 | **URL** | `http://<ZABBIX_PUBLIC_IP>/zabbix` |
 | **Utilizador** | `Admin` |
 | **Password** | `zabbix` |
+| **Versão** | **6.4.0** |
 
 ```bash
 export SSH_KEY_PATH="/c/Users/SEU_USUARIO/caminho/sua-chave.pem"

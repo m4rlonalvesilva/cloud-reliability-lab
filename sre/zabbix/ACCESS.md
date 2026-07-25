@@ -4,7 +4,8 @@ Guia principal (login web): **[README.md](README.md)**
 **Depois do Zabbix subir → agents:** **[01-INSTALAR-AGENT.md](01-INSTALAR-AGENT.md)**
 
 **Login UI:** utilizador `Admin` · password `zabbix`  
-**URL:** `http://<ZABBIX_PUBLIC_IP>/zabbix` (ver `terraform output zabbix_url`)
+**URL:** `http://<ZABBIX_PUBLIC_IP>/zabbix` (ver `terraform output zabbix_url`)  
+**Versão do lab:** Zabbix **6.4.0** (PostgreSQL + Apache)
 
 ---
 

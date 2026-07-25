@@ -47,7 +47,7 @@ Objetivo pedagógico: **criar alertas, provocar falhas, ver eventos, reconhecer,
 - [x] Flag Terraform `enable_zabbix` (default `true`; `false` = só K8s)
 - [x] 3.ª EC2: **Zabbix Server** (`zabbix_instance_type`, default `t3.small`) — resource `aws_instance.zabbix`
 - [x] Security Group: UI HTTP :80 só em `allow_ssh_cidrs` (agents usam tráfego self do SG no MVP)
-- [x] Bootstrap Server: Zabbix 7.0 + Frontend Apache + PostgreSQL (`install-zabbix-server.sh`)
+- [x] Bootstrap Server: Zabbix **6.4.0** + Frontend Apache + PostgreSQL (`install-zabbix-server.sh`)
 - [ ] Bootstrap Agent nos nós K8s existentes (control-plane + worker)
 - [x] Inventário gerado com URL + SSH do Zabbix (`cluster-lab.generated.txt` + outputs)
 - [ ] Hosts no Zabbix: `control-plane`, `worker` (além do “Zabbix server” local)
@@ -109,7 +109,7 @@ Outputs: `zabbix_public_ip`, `zabbix_private_ip`, `zabbix_url`. Fluxo CKA intact
 | UI | HTTP :80 no MVP; HTTPS depois se necessário |
 | Acesso UI | Mesmos CIDRs que SSH (`allow_ssh_cidrs`) |
 | DB | PostgreSQL local na EC2 Zabbix |
-| Versão | Zabbix 7.0 LTS (repo oficial, Ubuntu 22.04) |
+| Versão | Zabbix **6.4.0** (repo oficial 6.4, Ubuntu 22.04, pacotes pinados) |
 | Kafka/WebLogic | Fora do MVP |
 | CKA labs | Continuam; `CKA_DEPLOY_LABS=false` se quiseres só SRE numa sessão |
 
