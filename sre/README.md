@@ -24,7 +24,8 @@ terraform destroy   # sempre ao terminar
 | [ARQUITETURA.md](ARQUITETURA.md) | Arquitetura alvo desta fase |
 | [zabbix/00-PRIMEIRO-ACESSO-WIZARD.md](zabbix/00-PRIMEIRO-ACESSO-WIZARD.md) | Wizard DB (1.º acesso) |
 | [zabbix/01-INSTALAR-AGENT.md](zabbix/01-INSTALAR-AGENT.md) | Instalar agent |
-| [zabbix/04-CONFIGURAR-ALERTAS.md](zabbix/04-CONFIGURAR-ALERTAS.md) | **Criar alertas na UI** |
+| [zabbix/04-CONFIGURAR-ALERTAS.md](zabbix/04-CONFIGURAR-ALERTAS.md) | Criar alertas na UI |
+| [zabbix/05-BACKUP-E-RESTORE.md](zabbix/05-BACKUP-E-RESTORE.md) | **Destroy + retomar sem refazer alertas** |
 | [zabbix/03-CENARIOS-VIDA-REAL.md](zabbix/03-CENARIOS-VIDA-REAL.md) | 12 cenários reais |
 | [runbooks/](runbooks/) | Runbooks estilo produção |
 | [drills/](drills/) | Scripts start/restore |
